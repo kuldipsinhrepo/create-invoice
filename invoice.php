@@ -246,9 +246,11 @@ function numberTowords($num)
                         <p>MOBILE :- {{customer['mobile']}}</p>
                         <p>OrderID   :- {{customer['order_id']}}</p>  -->
                                     <p style="font-size: 14px">
-                                        SY No. 191-1-A, Sub Plot-1 F.F Kadiwala Estate, Opp. Shivram Dyeing, <br>B/h Opera House Khatodara, Surat - 395002
+                                        SY No. 191-1-A, Sub Plot-1 F.F Kadiwala Estate, Opp. Shivram Dyeing, <br>B/h
+                                        Opera House Khatodara, Surat - 395002
                                         Surat 394317.
-                                        <br><strong>E-mail: </strong>hmp3178@gmail.com,<strong> (M):</strong> 92653 51832<strong> (W):</strong> 99044 11239
+                                        <br><strong>E-mail: </strong>hmp3178@gmail.com,<strong> (M):</strong> 92653
+                                        51832<strong> (W):</strong> 99044 11239
                                     </p>
                                 </div>
                             </td>
@@ -258,8 +260,7 @@ function numberTowords($num)
                 <table class="table table-bordered h4-14 amount_tbl"
                     style="width: 100%; -fs-table-paginate: paginate; margin-top: 15px">
                     <thead style="display: table-header-group">
-                        <tr
-                            style="margin: 0;padding: 15px;padding-left: 20px;-webkit-print-color-adjust: exact;">
+                        <tr style="margin: 0;padding: 15px;padding-left: 20px;-webkit-print-color-adjust: exact;">
                             <td colspan="2" class="text-center"><img src="img/barcode.png" width="100"></td>
                             <td colspan="10" style="vertical-align: baseline;">
                                 <table>
@@ -302,8 +303,7 @@ function numberTowords($num)
                             <td colspan="6" class="text-center"><b>Details of Receiver ( Billed To)</b></td>
                             <td colspan="6" class="text-center"><b>Details of Consignee ( Shipped To )</b></td>
                         </tr>
-                        <tr
-                            style="margin: 0;padding: 15px;padding-left: 20px;-webkit-print-color-adjust: exact;">
+                        <tr style="margin: 0;padding: 15px;padding-left: 20px;-webkit-print-color-adjust: exact;">
                             <td colspan="6">
                                 <h3>
                                     <?php echo $_POST['rec_name'] ?>
@@ -391,7 +391,7 @@ function numberTowords($num)
                                 </td>
                             </tr>
                         <?php } ?>
-                        
+
                     </tbody>
                     <tfoot>
                         <tr>
@@ -413,64 +413,97 @@ function numberTowords($num)
                         <tr>
                             <td colspan="8"></td>
                             <td colspan="2"><b>BASIC VALUE</b></td>
-                            <td colspan="2" class="text-right"><?php echo $_POST['basic_value'] ?></td>
+                            <td colspan="2" class="text-right">
+                                <?php echo $_POST['basic_value'] ?>
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="8"></td>
-                            <td colspan="2"><b>IGST @5.00</b></td>
-                            <td colspan="2" class="text-right"><?php echo $_POST['igst'] ?></td>
+                            <td colspan="2"><b>SGST @2.5.00</b></td>
+                            <td colspan="2" class="text-right">
+                                <?php echo $_POST['sgst'] ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="8"></td>
+                            <td colspan="2"><b>CGST @2.5.00</b></td>
+                            <td colspan="2" class="text-right">
+                                <?php echo $_POST['cgst'] ?>
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="8"></td>
                             <td colspan="2"><b>TOTAL AMOUNT</b></td>
-                            <td colspan="2" class="text-right"><?php echo $_POST['final_amount'] ?></td>
+                            <td colspan="2" class="text-right">
+                                <?php echo $_POST['final_amount'] ?>
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="3" class="text-center"><b>Amount In Word</b></td>
-                        <td colspan="9" style="vertical-align: top;text-transform: uppercase;"><b>
-                            <?php
-                        if(intval($_POST['final_amount']) > 0){
-                        echo numberTowords($_POST['final_amount']);
-                        }
-                        ?> only</b></td>
+                            <td colspan="9" style="vertical-align: top;text-transform: uppercase;"><b>
+                                    <?php
+                                    if (intval($_POST['final_amount']) > 0) {
+                                        echo numberTowords($_POST['final_amount']);
+                                    }
+                                    ?> only
+                                </b></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <table class="hm-p table-bordered" style="width: 100%; margin-top: 30px">
+                    </thead>
+                    <tr>
+                        <th style="width: 50px">Sr.</th>
+                        <th style="width: 200px"> OP7066</th>
+                        <th style="width: 100px">K-0428</th>
+                    </tr>
+
+                    </thead>
+                    <tbody>
+                        <?php for ($k = 0; $k <= count($_POST['val1']); $k++) { ?>
+                            <tr>
+                                <td>
+                                    <?php echo $k + 1 ?>
+                                </td>
+                                <td>
+                                    <?php echo $_POST['val1'][$k] ?>
+                                </td>
+                                <td>
+                                    <?php echo $_POST['val2'][$k] ?>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <?php echo $_POST['ttl_val1'] ?>
+                            </td>
+                            <td>
+                                <?php echo $_POST['ttl_val2'] ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <?php echo $_POST['ttl_item1'] ?>
+                            </td>
+                            <td>
+                                <?php echo $_POST['ttl_item2'] ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>Short %</td>
+                            <td>
+                                <?php echo $_POST['short_val'] ?>
+                            </td>
                         </tr>
                     </tfoot>
                 </table>
 
-                <table class="hm-p table-bordered" style="width: 100%; margin-top: 30px;display:none">
-                    <tr>
-                        <th style="width: 400px">BASIC VALUE</th>
-                        <td style="vertical-align: top; color: #000"> <b>
-                                <?php echo $_POST['basic_value'] ?>
-                            </b></td>
-                    </tr>
-                    <tr>
-                        <th style="width: 400px">IGST @5.00</th>
-                        <td style="vertical-align: top; color: #000"><b>
-                                <?php echo $_POST['igst'] ?>
-                            </b></td>
-                    </tr>
-                    <tr>
-                        <th style="vertical-align: top"></th>
-                    </tr>
-                    <tr>
-                        <th style="vertical-align: top">TOTAL AMOUNT</th>
-                        <td style="vertical-align: top"><b>
-                                <?php echo $_POST['final_amount'] ?>
-                            </b></td>
-                    </tr>
-                    <tr>
-                        <th style="vertical-align: top">Amount In Word</th>
-                        <td style="vertical-align: top;text-transform: uppercase;"><b><?php
-                        
-                        if(intval($_POST['final_amount']) > 0){
-                            echo numberTowords($_POST['final_amount']);
-                            }
-                        ?> only</b></td>
-                    </tr>
 
-
-                </table>
                 <table class="hm-p table-bordered" style="width: 100%; margin-top: 30px">
                     <tr>
                         <th style="width: 400px"> BANK NAME</th>
@@ -490,14 +523,6 @@ function numberTowords($num)
                             <?php echo $_POST['ifc_code'] ?>
                         </td>
                     </tr>
-                    <tr>
-                        <th style="vertical-align: top">BRANCH</th>
-                        <td style="vertical-align: top">
-                            <?php echo $_POST['branch'] ?>
-                        </td>
-                    </tr>
-
-
                 </table>
 
 
