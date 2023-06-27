@@ -1,5 +1,52 @@
 <?php
 ini_set('display_errors', false);
+include('con.php');
+
+
+$client_id=0;
+if ($_POST['client_id'] > 0) {
+    $client_id=$_POST['client_id'];
+} else {
+    $sql = "INSERT INTO `client_details`(`name`, `mobile`, `wmobile`, `email`, `address`) VALUES ('" . $_POST['client_name'] . "','" . $_POST['client_mobile'] . "','" . $_POST['client_whatsapp'] . "','" . $_POST['client_email'] . "','" . $_POST['client_address'] . "')";
+    mysqli_query($conn, $sql);
+    $client_id = mysqli_insert_id($conn);
+
+
+
+    $target_dir = "uploads/";
+    $target_file = $target_dir . basename($_FILES["logo"]["name"]);
+    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+    if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+        echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+        exit;
+    }
+    $check = getimagesize($_FILES["logo"]["tmp_name"]);
+    if ($check !== false) {
+        move_uploaded_file($_FILES["logo"]["tmp_name"], $target_dir . $client_id . ".jpg");
+    }
+}
+
+
+
+$invoice_insert_id = 0;
+if ($_POST['invoice_no'] != '' && $client_id > 0) {
+    $sql = "INSERT INTO `invoice_details`(`invoice_no`,`client_id`, `invoice_date`, `ack_date`, `ack_no`, `due_date`, `irn_no`, `rec_name`, `rec_pan`, `rec_gst`, `rec_address`, `con_name`, `con_pan`, `con_gst`, `con_address`, `invoice_amount`) VALUES ('" . $_POST['invoice_no'] . "','" . $client_id . "','" . $_POST['invoice_date'] . "','" . $_POST['ack_date'] . "','" . $_POST['ack_no'] . "','" . $_POST['due_date'] . "','" . $_POST['irn_no'] . "','" . $_POST['rec_name'] . "','" . $_POST['rec_pan'] . "','" . $_POST['rec_gst'] . "','" . $_POST['rec_address'] . "','" . $_POST['con_name'] . "','" . $_POST['con_pan'] . "','" . $_POST['con_gst'] . "','" . $_POST['con_address'] . "','" . $_POST['final_amount'] . "')";
+    mysqli_query($conn, $sql);
+    $invoice_insert_id = mysqli_insert_id($conn);
+
+}
+if ($invoice_insert_id > 0) {
+    for ($i = 0; $i < count($_POST['tbl_desc']); $i++) {
+        if ($_POST['amount'][$i] > 0) {
+            $sql = "INSERT INTO `product_details`(`invoice_no`, `description`, `hsn_code`, `d_no`, `lot_no`, `ch_no`, `pcs`, `gr_mts`, `fin_mts`, `short`, `rate`, `amount`) VALUES ($invoice_insert_id,'" . $_POST['tbl_desc'][$i] . "','" . $_POST['hsn_code'][$i] . "','" . $_POST['d_no'][$i] . "','" . $_POST['lot_no'][$i] . "','" . $_POST['ch_no'][$i] . "','" . $_POST['pcs'][$i] . "','" . $_POST['gr_mts'][$i] . "','" . $_POST['fin_mts'][$i] . "','" . $_POST['short'][$i] . "','" . $_POST['rate'][$i] . "','" . $_POST['amount'][$i] . "')";
+            mysqli_query($conn, $sql);
+        }
+    }
+    for ($k = 0; $k < count($_POST['val1']); $k++) {
+        $sql = "INSERT INTO `challan_details`(`invoice_no`,`value1`, `value2`) VALUES ($invoice_insert_id,'" . $_POST['val1'][$k] . "','" . $_POST['val2'][$k] . "')";
+        mysqli_query($conn, $sql);
+    }
+}
 //print_r($_POST);
 
 function numberTowords($num)
@@ -230,8 +277,7 @@ function numberTowords($num)
 
                     <table style="width: 100%; table-layout: fixed">
                         <tr>
-                            <td
-                                style="border-left: 1px solid #ddd; border-right: 1px solid #ddd;width: 30%; padding-left: 20px;">
+                            <td style="width: 30%; padding-left: 20px;">
                                 <div
                                     style="text-align: center;margin: auto;line-height: 1.5;font-size: 14px;color: #4a4a4a;">
                                     <img src="img/logo.png" width="280">
@@ -239,19 +285,19 @@ function numberTowords($num)
                             </td>
                             <td align="right" style="padding-left: 50px;line-height: 1.5;color: #323232;">
                                 <div>
-                                    <h1 style="text-align: left; margin: 0"><b>REYAN DIGITAL CREATION</b></h1>
-
-                                    <!-- <p>NAME   :- {{ customer["name"]}}</p>
-                        <p>ADDRESS:- {{customer['address']}}</p>
-                        <p>MOBILE :- {{customer['mobile']}}</p>
-                        <p>OrderID   :- {{customer['order_id']}}</p>  -->
-                                    <p style="font-size: 14px">
-                                        SY No. 191-1-A, Sub Plot-1 F.F Kadiwala Estate, Opp. Shivram Dyeing, <br>B/h
-                                        Opera House Khatodara, Surat - 395002
-                                        Surat 394317.
-                                        <br><strong>E-mail: </strong>hmp3178@gmail.com,<strong> (M):</strong> 92653
-                                        51832<strong> (W):</strong> 99044 11239
-                                    </p>
+                                    <?php 
+                                    $client_rs=mysqli_query($conn,"select * from client_details where id='".$client_id."'");
+                                    if(mysqli_num_rows($client_rs)>0){
+                                        $cr=mysqli_fetch_assoc($client_rs);
+                                        echo '<h1 style="text-align: left; margin: 0"><b>'.$cr['name'].'</b></h1>';
+                                        echo '<p style="font-size: 14px">'.$cr['address'];
+                                        echo '<br><strong>E-mail: </strong>'.$cr['email'].", ";
+                                        echo '<strong>(M): </strong>'.$cr['mobile'].", ";
+                                        echo '<strong>(W): </strong>'.$cr['wmobile'].",";
+                                        echo "</p>";
+                                    }
+                                    ?>
+                                   
                                 </div>
                             </td>
                         </tr>
@@ -351,7 +397,7 @@ function numberTowords($num)
 
                     </thead>
                     <tbody>
-                        <?php for ($i = 0; $i <= count($_POST['tbl_desc']); $i++) { ?>
+                        <?php for ($i = 0; $i < count($_POST['tbl_desc']); $i++) { ?>
                             <tr>
                                 <td>
                                     <?php echo $i + 1 ?>
@@ -443,7 +489,7 @@ function numberTowords($num)
                             <td colspan="9" style="vertical-align: top;text-transform: uppercase;"><b>
                                     <?php
                                     if (intval($_POST['final_amount']) > 0) {
-                                        echo numberTowords($_POST['final_amount']);
+                                        echo numberTowords(round($_POST['final_amount']));
                                     }
                                     ?> only
                                 </b></td>
@@ -454,13 +500,13 @@ function numberTowords($num)
                     </thead>
                     <tr>
                         <th style="width: 50px">Sr.</th>
-                        <th style="width: 200px"> OP7066</th>
-                        <th style="width: 100px">K-0428</th>
+                        <th style="width: 200px">Gross Meter</th>
+                        <th style="width: 100px">Fin Meter</th>
                     </tr>
 
                     </thead>
                     <tbody>
-                        <?php for ($k = 0; $k <= count($_POST['val1']); $k++) { ?>
+                        <?php for ($k = 0; $k < count($_POST['val1']); $k++) { ?>
                             <tr>
                                 <td>
                                     <?php echo $k + 1 ?>
@@ -478,19 +524,19 @@ function numberTowords($num)
                         <tr>
                             <td></td>
                             <td>
-                                <?php echo $_POST['ttl_val1'] ?>
+                                <b>Total: <?php echo $_POST['ttl_val1'] ?></b>
                             </td>
                             <td>
-                                <?php echo $_POST['ttl_val2'] ?>
+                            <b>Total: <?php echo $_POST['ttl_val2'] ?></b>
                             </td>
                         </tr>
                         <tr>
                             <td></td>
                             <td>
-                                <?php echo $_POST['ttl_item1'] ?>
+                            <b>Items:  <?php echo $_POST['ttl_item1'] ?></b>
                             </td>
                             <td>
-                                <?php echo $_POST['ttl_item2'] ?>
+                            <b>Items: <?php echo $_POST['ttl_item2'] ?></b>
                             </td>
                         </tr>
                         <tr>
